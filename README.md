@@ -1,2 +1,6 @@
 ﻿# Unity3d-Sequential
-使用外部配置文件控制Unity3d顺序执行特定的操作
+
+Use The Outside Config File To Control The GameObject In Unity3d Scene.
+
+version 0.01
+    Use XML file as config dirver.
