@@ -16,11 +16,6 @@ public enum EOperType
     SetParent
 }
 
-public struct TransfromStruct
-{
-    float x, y, z;
-}
-
 /// <summary>
 /// 操作对象
 /// </summary>
@@ -34,15 +29,19 @@ public class OperItem
     /// <summary>
     /// 当前操作的物体
     /// </summary>
-    public Transform go;
+    public GameObject go;
     /// <summary>
     /// 操作的类型
     /// </summary>
     public EOperType type;
     /// <summary>
-    /// 操作参数，对应于操作类型
+    /// 操作数值
     /// </summary>
-    public string OperParam = "";
+    public Vector3 param;
+    /// <summary>
+    /// 操作参数，父物体
+    /// </summary>
+    public Transform parent;
     /// <summary>
     /// 操作时的步骤提示
     /// </summary>
@@ -51,68 +50,9 @@ public class OperItem
     /// 操作错误信息
     /// </summary>
     public string errorMsg = "";
-}
-
-
-/// <summary>
-/// 下一步操作对象
-/// </summary>
-public class OperItemString
-{
     /// <summary>
-    /// 当前操作的物体
+    /// 操作分组，组内动作可以同时执行，只有所有动作都完成后才可继续执行
     /// </summary>
-    public string go;
-    /// <summary>
-    /// 操作的类型
-    /// </summary>
-    public string type = "";
-    /// <summary>
-    /// 操作参数，对应于操作类型
-    /// </summary>
-    public string OperParam = "";
-    /// <summary>
-    /// 操作时的步骤提示
-    /// </summary>
-    public string msg = "";
-    /// <summary>
-    /// 操作错误信息
-    /// </summary>
-    public string errorMsg = "";
-}
-
-public class DataSource : MonoBehaviour
-{
-    /// <summary>
-    /// 操作列表
-    /// </summary>
-    public List<OperItemString> oper = new List<OperItemString>();
-
-    void Start()
-    {
-       // ReadXML("C:\\Config2.xml");
-        Debug.Log(Application.dataPath);
-        ReadXML(Application.dataPath + "\\Config.xml");
-    }
-   
-    public void ReadXML(string path)
-    {
-        XmlDocument doc = new XmlDocument();
-        doc.Load(path);
-
-        XmlNode root = doc.SelectSingleNode("root");
-        XmlNodeList list = root.ChildNodes;
-        foreach (XmlNode item in list)
-        {
-            OperItemString o = new OperItemString();
-            XmlElement element = (XmlElement)item;
-            o.go = element.GetAttribute("gameobject").ToString();
-            o.type = element.GetAttribute("type").ToString();
-            o.OperParam = element.GetAttribute("param").ToString();
-            o.msg = element.GetAttribute("msg").ToString();
-            o.errorMsg = element.GetAttribute("errorMsg").ToString();
-            oper.Add(o);
-        }
-        Debug.Log(oper.Count);
-    }
+    public bool group = false;
+    public string groupID;
 }
