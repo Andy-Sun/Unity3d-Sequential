@@ -3,9 +3,13 @@
  * Date:        2015-07-06
  * Description: Read & Write XML file
  * ChangeLog:
+ *      2015-07-08:
+ *          Added:
+ *          1.所有文件路径均在assets目录下，读写xml文件时，只传递文件名
  *      2015-07-07:
  *      Added:
  *          1.
+ *      
  */
 using UnityEngine;
 using System.Collections;
@@ -16,21 +20,20 @@ using System;
 
 public class XMLRW : MonoBehaviour
 {
-
-
     /// <summary>
     /// 从XML文件中读取顺序信息
     /// </summary>
     [ExecuteInEditMode]
-    public static List<OperItem> ReadXML(string path)
+    public static List<OperItem> ReadXML(string fileName)
     {
+        Debug.Log("Read:" + Application.dataPath + "\\" + fileName);
         /// <summary>
         /// 操作列表
         /// </summary>
         List<OperItem> oper = new List<OperItem>();
 
         XmlDocument doc = new XmlDocument();
-        doc.Load(path);
+        doc.Load(Application.dataPath +"\\"+ fileName);
 
         XmlNode root = doc.SelectSingleNode("root");
         XmlNodeList list = root.ChildNodes;
@@ -58,13 +61,15 @@ public class XMLRW : MonoBehaviour
     [ExecuteInEditMode]
     public static void WriteXML(List<OperItem> operate, string fileName)
     {
+        
+        string path = Application.dataPath + "\\" + fileName;
         XmlDocument doc = new XmlDocument();
-        if (!File.Exists(fileName))
+        if (!File.Exists(path))
         {
             doc.Load(Application.dataPath + "\\Config.xml");
         }
         else
-            doc.Load(fileName);
+            doc.Load(path);
         foreach (OperItem item in operate)
         {
             XmlElement xmlNode = doc.CreateElement("Item");
@@ -80,6 +85,7 @@ public class XMLRW : MonoBehaviour
             xmlNode.SetAttribute("group", item.group ? item.groupID : "");
             doc.DocumentElement.AppendChild(xmlNode);
         }
-        doc.Save(fileName);
+        doc.Save(path);
+        Debug.Log(path);
     }
 }
