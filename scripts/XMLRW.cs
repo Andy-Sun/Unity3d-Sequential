@@ -3,6 +3,9 @@
  * Date:        2015-07-06
  * Description: Read & Write XML file
  * ChangeLog:
+ *      2015-07-06
+ *          Improvement：
+ *          1.每次保存编辑后的结果时，不保留编辑前的内容。即每次保存时，都以空xml文件为基准
  *      2015-07-08:
  *          Added:
  *          1.所有文件路径均在assets目录下，读写xml文件时，只传递文件名
@@ -64,12 +67,14 @@ public class XMLRW : MonoBehaviour
         
         string path = Application.dataPath + "\\" + fileName;
         XmlDocument doc = new XmlDocument();
-        if (!File.Exists(path))
-        {
-            doc.Load(Application.dataPath + "\\Config.xml");
-        }
-        else
-            doc.Load(path);
+        //if (!File.Exists(path))
+        //{
+        //    doc.Load(Application.dataPath + "\\Config.xml");
+        //}
+        //else
+        //    doc.Load(path);
+        //每次保存编辑后的结果时，不保留以前的内容
+        doc.Load(Application.dataPath + "\\Config.xml");
         foreach (OperItem item in operate)
         {
             XmlElement xmlNode = doc.CreateElement("Item");
