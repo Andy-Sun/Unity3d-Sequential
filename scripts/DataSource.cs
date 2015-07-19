@@ -23,6 +23,10 @@ public enum EOperType
 public class OperItem
 {
     /// <summary>
+    /// 判断该项在面板中是否展开
+    /// </summary>
+    public bool bFold = false;
+    /// <summary>
     /// 操作名称
     /// </summary>
     public string name = "";
