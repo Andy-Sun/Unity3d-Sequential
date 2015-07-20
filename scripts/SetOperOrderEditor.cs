@@ -2,6 +2,12 @@
  * Author:      AndySun
  * Date:        2015-07-08
  * Description: 通过界面操作XML文件进行读写操作
+ *              1.输入要读取的文件名，点击“Load File”按钮，从XML文件中读取信息并在Inspector界面中显示
+ *              ２.输入要写入的文件名，点击“Save File”按钮，将更改后的操作信息写入xml文件。
+ * ChangeLog:
+ *       2015-07-20:
+ *          Added:
+ *              1.添加物体运动的速度和精度控制
  */
 using UnityEngine;
 using UnityEditor;
@@ -107,9 +113,18 @@ public class SetOperOrderEditor : Editor
                 order.OperOrder[nNode].name = EditorGUILayout.TextField(new GUIContent("Operate Name:"), order.OperOrder[nNode].name);
                 EditorGUI.EndChangeCheck();
 
-                GUI.contentColor =  order.OperOrder[nNode].go == null ? Color.red : GUI.contentColor;
-                order.OperOrder[nNode].go = EditorGUILayout.ObjectField(new GUIContent("Operate GameObject:"), order.OperOrder[nNode].go, typeof(GameObject), GUILayout.ExpandWidth(true)) as GameObject;
+                EditorGUI.BeginChangeCheck();
+                GUI.contentColor =  order.OperOrder[nNode].trans == null ? Color.red : GUI.contentColor;
+                order.OperOrder[nNode].trans = EditorGUILayout.ObjectField(new GUIContent("Operate GameObject:"), order.OperOrder[nNode].trans, typeof(Transform), GUILayout.ExpandWidth(true)) as Transform;
                 GUI.contentColor = v4GUIColor;
+                if (EditorGUI.EndChangeCheck())
+                {
+                    if (GameObject.Find(order.OperOrder[nNode].trans.name).transform != order.OperOrder[nNode].trans)
+                    {
+                        order.OperOrder[nNode].trans = null;
+                        Debug.LogError("设置的物体存在同名物体，请确认物体名称不重复");
+                    }
+                }
 
                 order.OperOrder[nNode].type = (EOperType)EditorGUILayout.EnumPopup(new GUIContent("Operate Type"), order.OperOrder[nNode].type, GUILayout.ExpandWidth(true));
                 if (order.OperOrder[nNode].type == EOperType.SetParent)
@@ -117,7 +132,12 @@ public class SetOperOrderEditor : Editor
                     order.OperOrder[nNode].parent = EditorGUILayout.ObjectField(new GUIContent("Parent:"), order.OperOrder[nNode].parent, typeof(Transform)) as Transform;
                 }
                 else
-                    order.OperOrder[nNode].param = EditorGUILayout.Vector3Field(new GUIContent("Operate Parameter:"), order.OperOrder[nNode].param);
+                {
+                    order.OperOrder[nNode].target = EditorGUILayout.Vector3Field(new GUIContent("Operate Parameter:"), order.OperOrder[nNode].target);
+                    order.OperOrder[nNode].speed = EditorGUILayout.FloatField(new GUIContent("Speed:"), order.OperOrder[nNode].speed, GUILayout.ExpandWidth(true));
+                    order.OperOrder[nNode].precision = EditorGUILayout.Slider(new GUIContent("Precision:"), order.OperOrder[nNode].precision,0.001f,0.1f, GUILayout.ExpandWidth(true));
+                }
+                    
 
                 order.OperOrder[nNode].msg = EditorGUILayout.TextField(new GUIContent("Tip Messages:"), order.OperOrder[nNode].msg);
                 order.OperOrder[nNode].errorMsg = EditorGUILayout.TextField(new GUIContent("Error Messages:"), order.OperOrder[nNode].errorMsg);
