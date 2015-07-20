@@ -2,6 +2,10 @@
  * Author:      AndySun
  * Date:        2015-07-02
  * Description: The DataStruct for xml file & Unity Scripts Communication with each other.
+ * ChangeLog：
+ *      2015-07-20
+ *          Added:
+ *              1.添加物体运动与旋转时的速度及最终的检测精度
  */
 using System.Collections.Generic;
 using System.Xml;
@@ -22,10 +26,7 @@ public enum EOperType
 [System.Serializable]
 public class OperItem
 {
-    /// <summary>
-    /// 判断该项在面板中是否展开
-    /// </summary>
-    public bool bFold = false;
+    public bool bFold = true;
     /// <summary>
     /// 操作名称
     /// </summary>
@@ -33,7 +34,7 @@ public class OperItem
     /// <summary>
     /// 当前操作的物体
     /// </summary>
-    public GameObject go;
+    public Transform trans;
     /// <summary>
     /// 操作的类型
     /// </summary>
@@ -41,7 +42,15 @@ public class OperItem
     /// <summary>
     /// 操作数值
     /// </summary>
-    public Vector3 param;
+    public Vector3 target;
+    /// <summary>
+    /// 操作速度
+    /// </summary>
+    public float speed = 0.01f;
+    /// <summary>
+    /// 操作精度
+    /// </summary>
+    public float precision = 0.01f;
     /// <summary>
     /// 操作参数，父物体
     /// </summary>

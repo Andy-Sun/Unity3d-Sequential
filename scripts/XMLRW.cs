@@ -45,11 +45,19 @@ public class XMLRW : MonoBehaviour
             OperItem o = new OperItem();
             XmlElement element = (XmlElement)item;
             o.name = element.GetAttribute("Name");
-            o.go = GameObject.Find(element.GetAttribute("gameobject"));
+            o.trans = GameObject.Find(element.GetAttribute("transform")).transform;
             o.type = (EOperType)Enum.Parse(typeof(EOperType), element.GetAttribute("type"));
-            o.param = new Vector3(float.Parse(element.GetAttribute("x")), float.Parse(element.GetAttribute("y")), float.Parse(element.GetAttribute("z")));
+            
             if (o.type == EOperType.SetParent)
+            {
                 o.parent = GameObject.Find(element.GetAttribute("parent")).transform;
+            }
+            else
+            {
+                o.target = new Vector3(float.Parse(element.GetAttribute("x")), float.Parse(element.GetAttribute("y")), float.Parse(element.GetAttribute("z")));
+                o.speed = float.Parse(element.GetAttribute("speed"));
+                o.precision = float.Parse(element.GetAttribute("precision"));
+            }
             o.msg = element.GetAttribute("msg");
             o.errorMsg = element.GetAttribute("errorMsg");
             o.groupID = element.GetAttribute("group");
@@ -64,7 +72,6 @@ public class XMLRW : MonoBehaviour
     [ExecuteInEditMode]
     public static void WriteXML(List<OperItem> operate, string fileName)
     {
-        
         string path = Application.dataPath + "\\" + fileName;
         XmlDocument doc = new XmlDocument();
         //if (!File.Exists(path))
@@ -79,11 +86,13 @@ public class XMLRW : MonoBehaviour
         {
             XmlElement xmlNode = doc.CreateElement("Item");
             xmlNode.SetAttribute("Name", item.name);
-            xmlNode.SetAttribute("gameobject", item.go.transform.name);
+            xmlNode.SetAttribute("transform", item.trans.name);
             xmlNode.SetAttribute("type", item.type.ToString());
-            xmlNode.SetAttribute("x", item.param.x.ToString());
-            xmlNode.SetAttribute("y", item.param.y.ToString());
-            xmlNode.SetAttribute("z", item.param.z.ToString());
+            xmlNode.SetAttribute("x", item.target.x.ToString());
+            xmlNode.SetAttribute("y", item.target.y.ToString());
+            xmlNode.SetAttribute("z", item.target.z.ToString());
+            xmlNode.SetAttribute("speed", item.speed.ToString());
+            xmlNode.SetAttribute("precision", item.precision.ToString());
             xmlNode.SetAttribute("parent", item.parent == null ? "" : item.parent.name);
             xmlNode.SetAttribute("msg", item.msg);
             xmlNode.SetAttribute("errorMsg", item.errorMsg);
