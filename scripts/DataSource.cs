@@ -36,6 +36,18 @@ public class OperItem
     /// </summary>
     public Transform trans;
     /// <summary>
+    /// 操作物体的名称
+    /// </summary>
+    public string transName;
+    /// <summary>
+    /// 当前操作物体的tag
+    /// </summary>
+    public string tag;
+    /// <summary>
+    /// 当前物体的唯一标识
+    /// </summary>
+    public int instanceID;
+    /// <summary>
     /// 操作的类型
     /// </summary>
     public EOperType type;
