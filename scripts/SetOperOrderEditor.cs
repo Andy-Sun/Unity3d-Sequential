@@ -115,21 +115,19 @@ public class SetOperOrderEditor : Editor
 
                 EditorGUI.BeginChangeCheck();
                 GUI.contentColor =  order.OperOrder[nNode].trans == null ? Color.red : GUI.contentColor;
-                order.OperOrder[nNode].trans = EditorGUILayout.ObjectField(new GUIContent("Operate GameObject:"), order.OperOrder[nNode].trans, typeof(Transform), GUILayout.ExpandWidth(true)) as Transform;
+                order.OperOrder[nNode].trans = EditorGUILayout.ObjectField(new GUIContent("Operate GameObject:"), order.OperOrder[nNode].trans, typeof(Transform),true, GUILayout.ExpandWidth(true)) as Transform;
                 GUI.contentColor = v4GUIColor;
                 if (EditorGUI.EndChangeCheck())
                 {
-                    if (GameObject.Find(order.OperOrder[nNode].trans.name).transform != order.OperOrder[nNode].trans)
-                    {
-                        order.OperOrder[nNode].trans = null;
-                        Debug.LogError("设置的物体存在同名物体，请确认物体名称不重复");
-                    }
+                    //order.OperOrder[nNode].instanceID = order.OperOrder[nNode].trans.GetInstanceID();
+                    order.OperOrder[nNode].tag = order.OperOrder[nNode].trans.tag;
+                    order.OperOrder[nNode].transName = order.OperOrder[nNode].trans.name;
                 }
 
                 order.OperOrder[nNode].type = (EOperType)EditorGUILayout.EnumPopup(new GUIContent("Operate Type"), order.OperOrder[nNode].type, GUILayout.ExpandWidth(true));
                 if (order.OperOrder[nNode].type == EOperType.SetParent)
                 {
-                    order.OperOrder[nNode].parent = EditorGUILayout.ObjectField(new GUIContent("Parent:"), order.OperOrder[nNode].parent, typeof(Transform)) as Transform;
+                    order.OperOrder[nNode].parent = EditorGUILayout.ObjectField(new GUIContent("Parent:"), order.OperOrder[nNode].parent, typeof(Transform),true) as Transform;
                 }
                 else
                 {
