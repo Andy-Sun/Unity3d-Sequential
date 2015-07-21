@@ -3,6 +3,9 @@
  * Date:        2015-07-06
  * Description: Read & Write XML file
  * ChangeLog:
+ *      2015-07-21
+ *          Improvement:
+ *              1.XML文件中只保存运动物体的名称和Tag用于定位特定的物体，为便于管理防止同名内容，Tranform变量的最终确定由Controller决定
  *      2015-07-06
  *          Improvement：
  *          1.每次保存编辑后的结果时，不保留编辑前的内容。即每次保存时，都以空xml文件为基准
@@ -45,7 +48,11 @@ public class XMLRW : MonoBehaviour
             OperItem o = new OperItem();
             XmlElement element = (XmlElement)item;
             o.name = element.GetAttribute("Name");
-            o.trans = GameObject.Find(element.GetAttribute("transform")).transform;
+            o.transName = element.GetAttribute("transName");
+            //获取要操作的物体对象
+            //o.instanceID = int.Parse(element.GetAttribute("instanceID"));
+            o.tag = element.GetAttribute("tag");
+            
             o.type = (EOperType)Enum.Parse(typeof(EOperType), element.GetAttribute("type"));
             
             if (o.type == EOperType.SetParent)
@@ -86,7 +93,9 @@ public class XMLRW : MonoBehaviour
         {
             XmlElement xmlNode = doc.CreateElement("Item");
             xmlNode.SetAttribute("Name", item.name);
-            xmlNode.SetAttribute("transform", item.trans.name);
+            xmlNode.SetAttribute("transName", item.transName);
+            //xmlNode.SetAttribute("instanceID", item.instanceID.ToString());
+            xmlNode.SetAttribute("tag", item.tag);
             xmlNode.SetAttribute("type", item.type.ToString());
             xmlNode.SetAttribute("x", item.target.x.ToString());
             xmlNode.SetAttribute("y", item.target.y.ToString());
