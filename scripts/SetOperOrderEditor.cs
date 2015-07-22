@@ -40,7 +40,7 @@ public class SetOperOrderEditor : Editor
         PropXMLName.stringValue = EditorGUILayout.TextField(new GUIContent("Load XML File:", "当前操作的XML文件名称"), PropXMLName.stringValue);
         if (GUILayout.Button(new GUIContent("Load File")))
         {
-            order.OperOrder = XMLRW.ReadXML(PropXMLName.stringValue);
+            order.OperOrder = XMLRW.ReadXML(PropXMLName.stringValue,order.transform);
         }
         EditorGUILayout.EndHorizontal();
 

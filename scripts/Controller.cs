@@ -3,6 +3,10 @@
  * Date:            2015-07-20
  * Description:     控制XML存储操作的顺序执行。
  * ChangeLog:
+ *      2015-07-22
+ *          Added:
+ *              1.添加控制逻辑的暂停操作
+ *              2.添加多项操作整合执行
  *      2015-07-21
  *          Added:
  *              1.由于同一Scene中可能会包含多个同名且同tag的物体，所以将该脚本附于最顶层物体上，要操作的物体都在该物体下。
@@ -20,43 +24,98 @@ public class Controller : MonoBehaviour
     List<OperItem> list = new List<OperItem>();
     static OperItem currentItem;//当前操作项
     static int id = -1;//操作项编号
+    static bool b_pause = false;//暂停操作
+
+    List<OperItem> groupList = new List<OperItem>();
 
     void Start()
     {
-        list = XMLRW.ReadXML("OrderConfig.xml");
+        list = XMLRW.ReadXML("OrderConfig.xml", transform);
         NextStep();
     }
 
     void Update()
     {
+        if (b_pause)
+            return;
+        if (groupList.Count != 0)
+        {
+            Group();
+            return;
+        }
         if (id < list.Count)
         {
-            Debug.Log(currentItem.trans);
-            switch (currentItem.type)
+            StepInto();
+        }
+    }
+
+    /// <summary>
+    /// 单项执行
+    /// </summary>
+    void StepInto()
+    {
+        Debug.Log(id + currentItem.transName);
+        Debug.Log(id + "  " + currentItem.trans);
+        switch (currentItem.type)
+        {
+            case EOperType.Trans:
+                if (Vector3.Distance(currentItem.trans.position, currentItem.target) > currentItem.precision)
+                {
+                    currentItem.trans.position = Vector3.Lerp(currentItem.trans.position, currentItem.target, currentItem.speed);
+                }
+                else
+                    NextStep();
+                break;
+            case EOperType.Rot:
+                if (Vector3.Distance(currentItem.trans.localEulerAngles, currentItem.target) > currentItem.precision)
+                {
+                    currentItem.trans.localEulerAngles = Vector3.Lerp(currentItem.trans.localEulerAngles, currentItem.target, currentItem.speed);
+                }
+                else
+                    NextStep();
+                break;
+            case EOperType.SetParent:
+                currentItem.trans.SetParent(currentItem.parent);
+                NextStep();
+                break;
+        }
+    }
+    /// <summary>
+    /// 组合执行
+    /// </summary>
+    void Group()
+    {
+        for (int i = 0; i < groupList.Count; i++)
+        {
+            OperItem item = groupList[i];
+            Debug.Log(item.transName);
+            switch (item.type)
             {
                 case EOperType.Trans:
-                    if (Vector3.Distance(currentItem.trans.position, currentItem.target) > currentItem.precision)
+                    if (Vector3.Distance(item.trans.position, item.target) > item.precision)
                     {
-                        currentItem.trans.position = Vector3.Lerp(currentItem.trans.position, currentItem.target, currentItem.speed);
+                        item.trans.position = Vector3.Lerp(item.trans.position, item.target, item.speed);
                     }
                     else
-                        NextStep();
+                        groupList.Remove(item);
                     break;
                 case EOperType.Rot:
-                    if (Vector3.Distance(currentItem.trans.localEulerAngles, currentItem.target) > currentItem.precision)
+                    if (Vector3.Distance(item.trans.localEulerAngles, item.target) > item.precision)
                     {
-                        currentItem.trans.localEulerAngles = Vector3.Lerp(currentItem.trans.localEulerAngles, currentItem.target, currentItem.speed);
+                        item.trans.localEulerAngles = Vector3.Lerp(item.trans.localEulerAngles, item.target, item.speed);
                     }
                     else
-                        NextStep();
+                        groupList.Remove(item);
                     break;
                 case EOperType.SetParent:
-                    currentItem.trans.SetParent(currentItem.parent);
-                    NextStep();
-                    break;
-                default:
+                    item.trans.SetParent(item.parent);
+                    groupList.Remove(item);
                     break;
             }
+        }
+        if (groupList.Count == 0)
+        {
+            NextStep();
         }
     }
     /// <summary>
@@ -64,19 +123,27 @@ public class Controller : MonoBehaviour
     /// </summary>
     void NextStep()
     {
-        ++id;
-        if (id != list.Count)
+        if (++id < list.Count)
         {
-            currentItem = list[id];
-            //确定要运动的物体Tranform对象
-            foreach (Transform item in transform.GetComponentsInChildren<Transform>())
+            if (list[id].group)
             {
-                if (currentItem.transName == item.name)
+                string groupid = list[id].groupID;
+                for (; id < list.Count; ++id)
                 {
-                    currentItem.trans = item;
-                    break;
+                    if (list[id].groupID == groupid)
+                    {
+                        groupList.Add(list[id]);
+                    }
+                    else
+                    {
+                        --id;
+                        return;
+                    }
                 }
             }
+            Debug.Log("CurrentID " + id);
+            if (list[id-1].group)
+                currentItem = list[id];
         }
     }
 

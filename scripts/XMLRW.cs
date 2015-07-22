@@ -30,7 +30,7 @@ public class XMLRW : MonoBehaviour
     /// 从XML文件中读取顺序信息
     /// </summary>
     [ExecuteInEditMode]
-    public static List<OperItem> ReadXML(string fileName)
+    public static List<OperItem> ReadXML(string fileName,Transform rootTrans)
     {
         Debug.Log("Read:" + Application.dataPath + "\\" + fileName);
         /// <summary>
@@ -50,14 +50,28 @@ public class XMLRW : MonoBehaviour
             o.name = element.GetAttribute("Name");
             o.transName = element.GetAttribute("transName");
             //获取要操作的物体对象
-            //o.instanceID = int.Parse(element.GetAttribute("instanceID"));
             o.tag = element.GetAttribute("tag");
+            foreach (Transform trans in rootTrans.GetComponentsInChildren<Transform>())
+            {
+                if (o.transName == trans.name)
+                {
+                    o.trans = trans;
+                    break;
+                }
+            }
             
             o.type = (EOperType)Enum.Parse(typeof(EOperType), element.GetAttribute("type"));
             
             if (o.type == EOperType.SetParent)
             {
-                o.parent = GameObject.Find(element.GetAttribute("parent")).transform;
+                foreach (Transform trans in rootTrans.GetComponentsInChildren<Transform>())
+                {
+                    if (element.GetAttribute("parent") == trans.name)
+                    {
+                        o.parent = trans;
+                        break;
+                    }
+                }
             }
             else
             {
@@ -68,6 +82,10 @@ public class XMLRW : MonoBehaviour
             o.msg = element.GetAttribute("msg");
             o.errorMsg = element.GetAttribute("errorMsg");
             o.groupID = element.GetAttribute("group");
+            if (!String.IsNullOrEmpty(o.groupID))
+            {
+                o.group = true;
+            }
             oper.Add(o);
         }
         return oper;
@@ -81,12 +99,7 @@ public class XMLRW : MonoBehaviour
     {
         string path = Application.dataPath + "\\" + fileName;
         XmlDocument doc = new XmlDocument();
-        //if (!File.Exists(path))
-        //{
-        //    doc.Load(Application.dataPath + "\\Config.xml");
-        //}
-        //else
-        //    doc.Load(path);
+
         //每次保存编辑后的结果时，不保留以前的内容
         doc.Load(Application.dataPath + "\\Config.xml");
         foreach (OperItem item in operate)
@@ -94,7 +107,6 @@ public class XMLRW : MonoBehaviour
             XmlElement xmlNode = doc.CreateElement("Item");
             xmlNode.SetAttribute("Name", item.name);
             xmlNode.SetAttribute("transName", item.transName);
-            //xmlNode.SetAttribute("instanceID", item.instanceID.ToString());
             xmlNode.SetAttribute("tag", item.tag);
             xmlNode.SetAttribute("type", item.type.ToString());
             xmlNode.SetAttribute("x", item.target.x.ToString());
