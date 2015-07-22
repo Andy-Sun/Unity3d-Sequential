@@ -30,7 +30,7 @@ public class XMLRW : MonoBehaviour
     /// 从XML文件中读取顺序信息
     /// </summary>
     [ExecuteInEditMode]
-    public static List<OperItem> ReadXML(string fileName,Transform rootTrans)
+    public static List<OperItem> ReadXML(string fileName, Transform rootTrans)
     {
         Debug.Log("Read:" + Application.dataPath + "\\" + fileName);
         /// <summary>
@@ -39,7 +39,7 @@ public class XMLRW : MonoBehaviour
         List<OperItem> oper = new List<OperItem>();
 
         XmlDocument doc = new XmlDocument();
-        doc.Load(Application.dataPath +"\\"+ fileName);
+        doc.Load(Application.dataPath + "\\" + fileName);
 
         XmlNode root = doc.SelectSingleNode("root");
         XmlNodeList list = root.ChildNodes;
@@ -59,9 +59,9 @@ public class XMLRW : MonoBehaviour
                     break;
                 }
             }
-            
+
             o.type = (EOperType)Enum.Parse(typeof(EOperType), element.GetAttribute("type"));
-            
+
             if (o.type == EOperType.SetParent)
             {
                 foreach (Transform trans in rootTrans.GetComponentsInChildren<Transform>())
@@ -75,7 +75,21 @@ public class XMLRW : MonoBehaviour
             }
             else
             {
-                o.target = new Vector3(float.Parse(element.GetAttribute("x")), float.Parse(element.GetAttribute("y")), float.Parse(element.GetAttribute("z")));
+                o.space = (Space)Enum.Parse(typeof(Space), element.GetAttribute("space"));
+                Vector3 offset = new Vector3(float.Parse(element.GetAttribute("x")), float.Parse(element.GetAttribute("y")), float.Parse(element.GetAttribute("z")));
+                switch (o.space)
+                {
+                    case Space.Self:
+                        if (o.type == EOperType.Trans)
+                            o.target = o.trans.position + offset;
+                        else
+                            o.target = o.trans.localEulerAngles + offset;
+                        break;
+                    case Space.World:
+                        o.target = offset;
+                        break;
+                }
+
                 o.speed = float.Parse(element.GetAttribute("speed"));
                 o.precision = float.Parse(element.GetAttribute("precision"));
             }
@@ -86,6 +100,8 @@ public class XMLRW : MonoBehaviour
             {
                 o.group = true;
             }
+            else
+                o.group = false;
             oper.Add(o);
         }
         return oper;
@@ -109,6 +125,7 @@ public class XMLRW : MonoBehaviour
             xmlNode.SetAttribute("transName", item.transName);
             xmlNode.SetAttribute("tag", item.tag);
             xmlNode.SetAttribute("type", item.type.ToString());
+            xmlNode.SetAttribute("space", item.space.ToString());
             xmlNode.SetAttribute("x", item.target.x.ToString());
             xmlNode.SetAttribute("y", item.target.y.ToString());
             xmlNode.SetAttribute("z", item.target.z.ToString());

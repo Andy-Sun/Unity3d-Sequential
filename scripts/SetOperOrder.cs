@@ -18,7 +18,7 @@ using System.Collections.Generic;
 public class SetOperOrder : MonoBehaviour
 {
     public string fileName = "OrderConfig.xml";
-    public string saveName = "SavedName.xml";
+    public string saveName = "OrderConfig.xml";
     public List<OperItem> OperOrder = new List<OperItem>();
 
     public bool FirstNodeIsCoil()

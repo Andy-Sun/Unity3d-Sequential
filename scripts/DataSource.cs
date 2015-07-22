@@ -52,6 +52,10 @@ public class OperItem
     /// </summary>
     public EOperType type;
     /// <summary>
+    /// 操作空间坐标系
+    /// </summary>
+    public Space space;
+    /// <summary>
     /// 操作数值
     /// </summary>
     public Vector3 target;

@@ -142,8 +142,7 @@ public class Controller : MonoBehaviour
                 }
             }
             Debug.Log("当前运动对象编号： " + id);
-            if (list[id-1].group)
-                currentItem = list[id];
+            currentItem = list[id];
         }
     }
 
