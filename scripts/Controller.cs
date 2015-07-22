@@ -54,8 +54,8 @@ public class Controller : MonoBehaviour
     /// </summary>
     void StepInto()
     {
-        Debug.Log(id + currentItem.transName);
-        Debug.Log(id + "  " + currentItem.trans);
+        Debug.Log("单项执行物体名称：" + currentItem.transName);
+
         switch (currentItem.type)
         {
             case EOperType.Trans:
@@ -88,7 +88,7 @@ public class Controller : MonoBehaviour
         for (int i = 0; i < groupList.Count; i++)
         {
             OperItem item = groupList[i];
-            Debug.Log(item.transName);
+            Debug.Log("组合运动物体名称："+item.transName);
             switch (item.type)
             {
                 case EOperType.Trans:
@@ -141,7 +141,7 @@ public class Controller : MonoBehaviour
                     }
                 }
             }
-            Debug.Log("CurrentID " + id);
+            Debug.Log("当前运动对象编号： " + id);
             if (list[id-1].group)
                 currentItem = list[id];
         }
