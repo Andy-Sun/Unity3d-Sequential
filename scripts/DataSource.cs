@@ -54,13 +54,9 @@ public class OperItem
     /// </summary>
     public EOperType type;
     /// <summary>
-    /// 操作空间坐标系
+    /// 操作目标状态
     /// </summary>
-    public Space space;
-    /// <summary>
-    /// 操作数值
-    /// </summary>
-    public Vector3 target;
+    public Transform transTarget;
     /// <summary>
     /// 操作速度
     /// </summary>

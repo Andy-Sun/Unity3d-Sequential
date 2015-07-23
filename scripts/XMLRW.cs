@@ -67,19 +67,13 @@ public class XMLRW : MonoBehaviour
             {
                 case EOperType.Trans:
                 case EOperType.Rot:
-                    o.space = (Space)Enum.Parse(typeof(Space), element.GetAttribute("space"));
-                    Vector3 transOffset = new Vector3(float.Parse(element.GetAttribute("x")), float.Parse(element.GetAttribute("y")), float.Parse(element.GetAttribute("z")));
-                    switch (o.space)
+                    foreach (Transform trans in rootTrans.GetComponentsInChildren<Transform>())
                     {
-                        case Space.Self:
-                            if (o.type == EOperType.Trans)
-                                o.target = o.trans.position + transOffset;
-                            else
-                                o.target = o.trans.localEulerAngles + transOffset;
+                        if (element.GetAttribute("targetName") == trans.name)
+                        {
+                            o.transTarget = trans;
                             break;
-                        case Space.World:
-                            o.target = transOffset;
-                            break;
+                        }
                     }
                     o.speed = float.Parse(element.GetAttribute("speed"));
                     o.precision = float.Parse(element.GetAttribute("precision"));
@@ -130,10 +124,7 @@ public class XMLRW : MonoBehaviour
             xmlNode.SetAttribute("transName", item.transName);
             xmlNode.SetAttribute("tag", item.tag);
             xmlNode.SetAttribute("type", item.type.ToString());
-            xmlNode.SetAttribute("space", item.space.ToString());
-            xmlNode.SetAttribute("x", item.target.x.ToString());
-            xmlNode.SetAttribute("y", item.target.y.ToString());
-            xmlNode.SetAttribute("z", item.target.z.ToString());
+            xmlNode.SetAttribute("targetName", item.transTarget.name);
             xmlNode.SetAttribute("speed", item.speed.ToString());
             xmlNode.SetAttribute("precision", item.precision.ToString());
             xmlNode.SetAttribute("parent", item.parent == null ? "" : item.parent.name);

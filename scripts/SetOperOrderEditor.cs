@@ -122,7 +122,6 @@ public class SetOperOrderEditor : Editor
                 GUI.contentColor = v4GUIColor;
                 if (EditorGUI.EndChangeCheck())
                 {
-                    //order.OperOrder[nNode].instanceID = order.OperOrder[nNode].trans.GetInstanceID();
                     order.OperOrder[nNode].tag = order.OperOrder[nNode].trans.tag;
                     order.OperOrder[nNode].transName = order.OperOrder[nNode].trans.name;
                 }
@@ -132,8 +131,7 @@ public class SetOperOrderEditor : Editor
                 {
                     case EOperType.Trans:
                     case EOperType.Rot:
-                        order.OperOrder[nNode].space = (Space)EditorGUILayout.EnumPopup(new GUIContent("Operate Space", "当前运动的坐标,World-基于坐标系原点的目标位置，Self-基于自身坐标的目标位置距离"), order.OperOrder[nNode].space);
-                        order.OperOrder[nNode].target = EditorGUILayout.Vector3Field(new GUIContent("Operate Parameter:"), order.OperOrder[nNode].target);
+                        order.OperOrder[nNode].transTarget = EditorGUILayout.ObjectField(new GUIContent("target Transform:"),order.OperOrder[nNode].transTarget, typeof(Transform),true) as Transform;
                         order.OperOrder[nNode].speed = EditorGUILayout.FloatField(new GUIContent("Speed:"), order.OperOrder[nNode].speed, GUILayout.ExpandWidth(true));
                         order.OperOrder[nNode].precision = EditorGUILayout.Slider(new GUIContent("Precision:"), order.OperOrder[nNode].precision, 0.001f, 0.1f, GUILayout.ExpandWidth(true));
                         break;

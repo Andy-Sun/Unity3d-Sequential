@@ -61,17 +61,17 @@ public class Controller : MonoBehaviour
         switch (currentItem.type)
         {
             case EOperType.Trans:
-                if (Vector3.Distance(currentItem.trans.position, currentItem.target) > currentItem.precision)
+                if (Vector3.Distance(currentItem.trans.position, currentItem.transTarget.position) > currentItem.precision)
                 {
-                    currentItem.trans.position = Vector3.Lerp(currentItem.trans.position, currentItem.target, currentItem.speed);
+                    currentItem.trans.position = Vector3.Lerp(currentItem.trans.position, currentItem.transTarget.position, currentItem.speed);
                 }
                 else
                     NextStep();
                 break;
             case EOperType.Rot:
-                if (Vector3.Distance(currentItem.trans.localEulerAngles, currentItem.target) > currentItem.precision)
+                if (Vector3.Distance(currentItem.trans.localEulerAngles, currentItem.transTarget.localEulerAngles) > currentItem.precision)
                 {
-                    currentItem.trans.localEulerAngles = Vector3.Lerp(currentItem.trans.localEulerAngles, currentItem.target, currentItem.speed);
+                    currentItem.trans.localEulerAngles = Vector3.Lerp(currentItem.trans.localEulerAngles, currentItem.transTarget.localEulerAngles, currentItem.speed);
                 }
                 else
                     NextStep();
@@ -98,17 +98,17 @@ public class Controller : MonoBehaviour
             switch (item.type)
             {
                 case EOperType.Trans:
-                    if (Vector3.Distance(item.trans.position, item.target) > item.precision)
+                    if (Vector3.Distance(item.trans.position, item.transTarget.position) > item.precision)
                     {
-                        item.trans.position = Vector3.Lerp(item.trans.position, item.target, item.speed);
+                        item.trans.position = Vector3.Lerp(item.trans.position, item.transTarget.position, item.speed);
                     }
                     else
                         groupList.Remove(item);
                     break;
                 case EOperType.Rot:
-                    if (Vector3.Distance(item.trans.localEulerAngles, item.target) > item.precision)
+                    if (Vector3.Distance(item.trans.localEulerAngles, item.transTarget.localEulerAngles) > item.precision)
                     {
-                        item.trans.localEulerAngles = Vector3.Lerp(item.trans.localEulerAngles, item.target, item.speed);
+                        item.trans.localEulerAngles = Vector3.Lerp(item.trans.localEulerAngles, item.transTarget.localEulerAngles, item.speed);
                     }
                     else
                         groupList.Remove(item);
