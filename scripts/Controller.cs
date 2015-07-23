@@ -3,6 +3,9 @@
  * Date:            2015-07-20
  * Description:     控制XML存储操作的顺序执行。
  * ChangeLog:
+ *      2015-07-23
+ *          Added:
+ *              1.添加物体对象的激活与隐藏控制
  *      2015-07-22
  *          Added:
  *              1.添加控制逻辑的暂停操作
@@ -13,7 +16,6 @@
  *              2.具体的物体确定条件由FindTransform确定，可根据不同需求重新定义该方法的实现。
  */
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 public class Controller : MonoBehaviour
@@ -78,6 +80,10 @@ public class Controller : MonoBehaviour
                 currentItem.trans.SetParent(currentItem.parent);
                 NextStep();
                 break;
+            case EOperType.SetActive:
+                currentItem.trans.gameObject.SetActive(currentItem.active);
+                NextStep();
+                break;
         }
     }
     /// <summary>
@@ -109,6 +115,10 @@ public class Controller : MonoBehaviour
                     break;
                 case EOperType.SetParent:
                     item.trans.SetParent(item.parent);
+                    groupList.Remove(item);
+                    break;
+                case EOperType.SetActive:
+                    currentItem.trans.gameObject.SetActive(currentItem.active);
                     groupList.Remove(item);
                     break;
             }

@@ -3,12 +3,13 @@
  * Date:        2015-07-02
  * Description: The DataStruct for xml file & Unity Scripts Communication with each other.
  * ChangeLog：
+ *      2015-07-23
+ *          Added:
+ *              1.添加物体对象的激活与隐藏控制
  *      2015-07-20
  *          Added:
  *              1.添加物体运动与旋转时的速度及最终的检测精度
  */
-using System.Collections.Generic;
-using System.Xml;
 using UnityEngine;
 /// <summary>
 /// 操作的类型
@@ -17,7 +18,8 @@ public enum EOperType
 {
     Trans,
     Rot,
-    SetParent
+    SetParent,
+    SetActive
 }
 
 /// <summary>
@@ -71,6 +73,10 @@ public class OperItem
     /// 操作参数，父物体
     /// </summary>
     public Transform parent;
+    /// <summary>
+    /// 当前物体是否激活
+    /// </summary>
+    public bool active;
     /// <summary>
     /// 操作时的步骤提示
     /// </summary>

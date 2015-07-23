@@ -1,8 +1,12 @@
-﻿/*
+﻿
+/*
  * Author:      AndySun
  * Date:        2015-07-06
  * Description: Read & Write XML file
  * ChangeLog:
+ *      2015-07-23
+ *          Added:
+ *              1.添加物体对象的激活与隐藏控制
  *      2015-07-21
  *          Improvement:
  *              1.XML文件中只保存运动物体的名称和Tag用于定位特定的物体，为便于管理防止同名内容，Tranform变量的最终确定由Controller决定
@@ -18,11 +22,9 @@
  *      
  */
 using UnityEngine;
-using System.Collections;
-using System.Xml;
-using System.Collections.Generic;
-using System.IO;
 using System;
+using System.Collections.Generic;
+using System.Xml;
 
 public class XMLRW : MonoBehaviour
 {
@@ -59,39 +61,42 @@ public class XMLRW : MonoBehaviour
                     break;
                 }
             }
-
+            //根据操作类型填充对象值
             o.type = (EOperType)Enum.Parse(typeof(EOperType), element.GetAttribute("type"));
-
-            if (o.type == EOperType.SetParent)
+            switch (o.type)
             {
-                foreach (Transform trans in rootTrans.GetComponentsInChildren<Transform>())
-                {
-                    if (element.GetAttribute("parent") == trans.name)
+                case EOperType.Trans:
+                case EOperType.Rot:
+                    o.space = (Space)Enum.Parse(typeof(Space), element.GetAttribute("space"));
+                    Vector3 transOffset = new Vector3(float.Parse(element.GetAttribute("x")), float.Parse(element.GetAttribute("y")), float.Parse(element.GetAttribute("z")));
+                    switch (o.space)
                     {
-                        o.parent = trans;
-                        break;
+                        case Space.Self:
+                            if (o.type == EOperType.Trans)
+                                o.target = o.trans.position + transOffset;
+                            else
+                                o.target = o.trans.localEulerAngles + transOffset;
+                            break;
+                        case Space.World:
+                            o.target = transOffset;
+                            break;
                     }
-                }
-            }
-            else
-            {
-                o.space = (Space)Enum.Parse(typeof(Space), element.GetAttribute("space"));
-                Vector3 offset = new Vector3(float.Parse(element.GetAttribute("x")), float.Parse(element.GetAttribute("y")), float.Parse(element.GetAttribute("z")));
-                switch (o.space)
-                {
-                    case Space.Self:
-                        if (o.type == EOperType.Trans)
-                            o.target = o.trans.position + offset;
-                        else
-                            o.target = o.trans.localEulerAngles + offset;
-                        break;
-                    case Space.World:
-                        o.target = offset;
-                        break;
-                }
-
-                o.speed = float.Parse(element.GetAttribute("speed"));
-                o.precision = float.Parse(element.GetAttribute("precision"));
+                    o.speed = float.Parse(element.GetAttribute("speed"));
+                    o.precision = float.Parse(element.GetAttribute("precision"));
+                    break;
+                case EOperType.SetParent:
+                    foreach (Transform trans in rootTrans.GetComponentsInChildren<Transform>())
+                    {
+                        if (element.GetAttribute("parent") == trans.name)
+                        {
+                            o.parent = trans;
+                            break;
+                        }
+                    }
+                    break;
+                case EOperType.SetActive:
+                    o.active = element.GetAttribute("active") == "true" ? true : false;
+                    break;
             }
             o.msg = element.GetAttribute("msg");
             o.errorMsg = element.GetAttribute("errorMsg");
@@ -132,6 +137,7 @@ public class XMLRW : MonoBehaviour
             xmlNode.SetAttribute("speed", item.speed.ToString());
             xmlNode.SetAttribute("precision", item.precision.ToString());
             xmlNode.SetAttribute("parent", item.parent == null ? "" : item.parent.name);
+            xmlNode.SetAttribute("active", item.active.ToString());
             xmlNode.SetAttribute("msg", item.msg);
             xmlNode.SetAttribute("errorMsg", item.errorMsg);
             xmlNode.SetAttribute("group", item.group ? item.groupID : "");
