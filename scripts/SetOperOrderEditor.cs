@@ -95,9 +95,9 @@ public class SetOperOrderEditor : Editor
             {
                 int nButtonWidth = 60;
 
-                bool bUpEnabled = order.FirstNodeIsCoil() ? nNode > 1 : nNode > 0;
+                bool bUpEnabled = nNode > 0;
                 bool bDownEnabled = nNode < order.OperOrder.Count - 1;
-                bool bDelEnabled = order.FirstNodeIsCoil() ? order.OperOrder.Count > 2 : order.OperOrder.Count > 1;
+                bool bDelEnabled =  order.OperOrder.Count > 1;
 
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("", GUILayout.Width(40));
@@ -129,8 +129,7 @@ public class SetOperOrderEditor : Editor
                 order.OperOrder[nNode].type = (EOperType)EditorGUILayout.EnumPopup(new GUIContent("Operate Type"), order.OperOrder[nNode].type, GUILayout.ExpandWidth(true));
                 switch (order.OperOrder[nNode].type)
                 {
-                    case EOperType.Trans:
-                    case EOperType.Rot:
+                    case EOperType.SetTransform:
                         order.OperOrder[nNode].transTarget = EditorGUILayout.ObjectField(new GUIContent("target Transform:"),order.OperOrder[nNode].transTarget, typeof(Transform),true) as Transform;
                         order.OperOrder[nNode].speed = EditorGUILayout.FloatField(new GUIContent("Speed:"), order.OperOrder[nNode].speed, GUILayout.ExpandWidth(true));
                         order.OperOrder[nNode].precision = EditorGUILayout.Slider(new GUIContent("Precision:"), order.OperOrder[nNode].precision, 0.001f, 0.1f, GUILayout.ExpandWidth(true));

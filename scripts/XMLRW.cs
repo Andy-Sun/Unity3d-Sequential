@@ -65,8 +65,7 @@ public class XMLRW : MonoBehaviour
             o.type = (EOperType)Enum.Parse(typeof(EOperType), element.GetAttribute("type"));
             switch (o.type)
             {
-                case EOperType.Trans:
-                case EOperType.Rot:
+                case EOperType.SetTransform:
                     foreach (Transform trans in rootTrans.GetComponentsInChildren<Transform>())
                     {
                         if (element.GetAttribute("targetName") == trans.name)

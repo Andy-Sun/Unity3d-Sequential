@@ -16,8 +16,7 @@ using UnityEngine;
 /// </summary>
 public enum EOperType
 {
-    Trans,
-    Rot,
+    SetTransform,
     SetParent,
     SetActive
 }

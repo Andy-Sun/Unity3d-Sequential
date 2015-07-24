@@ -21,18 +21,6 @@ public class SetOperOrder : MonoBehaviour
     public string saveName = "OrderConfig.xml";
     public List<OperItem> OperOrder = new List<OperItem>();
 
-    public bool FirstNodeIsCoil()
-    {
-        if (OperOrder != null)
-        {
-            if (OperOrder.Count > 0)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public void MoveNodeUp(int nNode)
     {
         if (OperOrder != null)
@@ -65,8 +53,9 @@ public class SetOperOrder : MonoBehaviour
         {
             OperOrder = new List<OperItem>();
         }
-
-        OperOrder.Insert(nNode + 1, new OperItem());
+        OperItem item = new OperItem();
+        item = OperOrder[nNode];
+        OperOrder.Insert(nNode + 1, item);
     }
 
     public void RemoveNode(int nNode)

@@ -60,22 +60,6 @@ public class Controller : MonoBehaviour
 
         switch (currentItem.type)
         {
-            case EOperType.Trans:
-                if (Vector3.Distance(currentItem.trans.position, currentItem.transTarget.position) > currentItem.precision)
-                {
-                    currentItem.trans.position = Vector3.Lerp(currentItem.trans.position, currentItem.transTarget.position, currentItem.speed);
-                }
-                else
-                    NextStep();
-                break;
-            case EOperType.Rot:
-                if (Vector3.Distance(currentItem.trans.localEulerAngles, currentItem.transTarget.localEulerAngles) > currentItem.precision)
-                {
-                    currentItem.trans.localEulerAngles = Vector3.Lerp(currentItem.trans.localEulerAngles, currentItem.transTarget.localEulerAngles, currentItem.speed);
-                }
-                else
-                    NextStep();
-                break;
             case EOperType.SetParent:
                 currentItem.trans.SetParent(currentItem.parent);
                 NextStep();
@@ -83,6 +67,15 @@ public class Controller : MonoBehaviour
             case EOperType.SetActive:
                 currentItem.trans.gameObject.SetActive(currentItem.active);
                 NextStep();
+                break;
+            case EOperType.SetTransform:
+                if (Vector3.Distance(currentItem.trans.position, currentItem.transTarget.position) > currentItem.precision)
+                {
+                    currentItem.trans.position = Vector3.Lerp(currentItem.trans.position, currentItem.transTarget.position, currentItem.speed);
+                    currentItem.trans.localEulerAngles = Vector3.Lerp(currentItem.trans.localEulerAngles, currentItem.transTarget.localEulerAngles, currentItem.speed);
+                }
+                else
+                    NextStep();
                 break;
         }
     }
@@ -97,29 +90,22 @@ public class Controller : MonoBehaviour
             Debug.Log("组合运动物体名称："+item.transName);
             switch (item.type)
             {
-                case EOperType.Trans:
-                    if (Vector3.Distance(item.trans.position, item.transTarget.position) > item.precision)
-                    {
-                        item.trans.position = Vector3.Lerp(item.trans.position, item.transTarget.position, item.speed);
-                    }
-                    else
-                        groupList.Remove(item);
-                    break;
-                case EOperType.Rot:
-                    if (Vector3.Distance(item.trans.localEulerAngles, item.transTarget.localEulerAngles) > item.precision)
-                    {
-                        item.trans.localEulerAngles = Vector3.Lerp(item.trans.localEulerAngles, item.transTarget.localEulerAngles, item.speed);
-                    }
-                    else
-                        groupList.Remove(item);
-                    break;
                 case EOperType.SetParent:
                     item.trans.SetParent(item.parent);
                     groupList.Remove(item);
                     break;
                 case EOperType.SetActive:
-                    currentItem.trans.gameObject.SetActive(currentItem.active);
+                    item.trans.gameObject.SetActive(item.active);
                     groupList.Remove(item);
+                    break;
+                case EOperType.SetTransform:
+                    if (Vector3.Distance(item.trans.position, item.transTarget.position) > item.precision)
+                    {
+                        item.trans.position = Vector3.Lerp(item.trans.position, item.transTarget.position, item.speed);
+                        item.trans.localEulerAngles = Vector3.Lerp(item.trans.localEulerAngles, item.transTarget.localEulerAngles, item.speed);
+                    }
+                    else
+                        groupList.Remove(item);
                     break;
             }
         }
@@ -155,5 +141,4 @@ public class Controller : MonoBehaviour
             currentItem = list[id];
         }
     }
-
 }
