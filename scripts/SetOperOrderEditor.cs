@@ -138,7 +138,7 @@ public class SetOperOrderEditor : Editor
                         order.OperOrder[nNode].parent = EditorGUILayout.ObjectField(new GUIContent("Parent:"), order.OperOrder[nNode].parent, typeof(Transform), true) as Transform;
                         break;
                     case EOperType.SetActive:
-                        order.OperOrder[nNode].active = EditorGUILayout.Toggle(new GUIContent("Is Active:"), order.OperOrder[nNode].active);
+                        order.OperOrder[nNode].isActive = EditorGUILayout.Toggle(new GUIContent("Is Active:"), order.OperOrder[nNode].isActive);
                         break;
                 }
 
@@ -149,6 +149,7 @@ public class SetOperOrderEditor : Editor
                 order.OperOrder[nNode].group = EditorGUILayout.ToggleLeft(new GUIContent("Use Group:"), order.OperOrder[nNode].group);
                 order.OperOrder[nNode].groupID = EditorGUILayout.TextField(order.OperOrder[nNode].groupID, GUILayout.ExpandWidth(true));
                 EditorGUILayout.EndHorizontal();
+                order.OperOrder[nNode].isFinishPause = EditorGUILayout.Toggle(new GUIContent("Is Finish Pause:"),order.OperOrder[nNode].isFinishPause);
             }
         }
         if (nUp != -1)

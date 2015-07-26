@@ -88,7 +88,7 @@ public class XMLRW : MonoBehaviour
                     }
                     break;
                 case EOperType.SetActive:
-                    o.active = element.GetAttribute("active") == "true" ? true : false;
+                    o.isActive = !string.IsNullOrEmpty(element.GetAttribute("active"));
                     break;
             }
             o.msg = element.GetAttribute("msg");
@@ -100,6 +100,7 @@ public class XMLRW : MonoBehaviour
             }
             else
                 o.group = false;
+            o.isFinishPause = !string.IsNullOrEmpty(element.GetAttribute("pause"));
             oper.Add(o);
         }
         return oper;
@@ -127,10 +128,11 @@ public class XMLRW : MonoBehaviour
             xmlNode.SetAttribute("speed", item.speed.ToString());
             xmlNode.SetAttribute("precision", item.precision.ToString());
             xmlNode.SetAttribute("parent", item.parent == null ? "" : item.parent.name);
-            xmlNode.SetAttribute("active", item.active.ToString());
+            xmlNode.SetAttribute("active", item.isActive?"true":"");
             xmlNode.SetAttribute("msg", item.msg);
             xmlNode.SetAttribute("errorMsg", item.errorMsg);
             xmlNode.SetAttribute("group", item.group ? item.groupID : "");
+            xmlNode.SetAttribute("pause", item.isFinishPause?"true":"");
             doc.DocumentElement.AppendChild(xmlNode);
         }
         doc.Save(path);

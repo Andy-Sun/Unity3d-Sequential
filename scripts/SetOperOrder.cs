@@ -53,9 +53,7 @@ public class SetOperOrder : MonoBehaviour
         {
             OperOrder = new List<OperItem>();
         }
-        OperItem item = new OperItem();
-        item = OperOrder[nNode];
-        OperOrder.Insert(nNode + 1, item);
+        OperOrder.Insert(nNode + 1, new OperItem(OperOrder[nNode]));
     }
 
     public void RemoveNode(int nNode)

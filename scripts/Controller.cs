@@ -26,7 +26,7 @@ public class Controller : MonoBehaviour
     List<OperItem> list = new List<OperItem>();
     static OperItem currentItem;//当前操作项
     static int id = -1;//操作项编号
-    static bool b_pause = false;//暂停操作
+    static bool b_pause = true;//暂停操作
 
     List<OperItem> groupList = new List<OperItem>();
 
@@ -50,7 +50,21 @@ public class Controller : MonoBehaviour
             StepInto();
         }
     }
-
+    /// <summary>
+    /// 继续执行下一步操作
+    /// </summary>
+    public static void Continue()
+    {
+        b_pause = false;
+    }
+    /// <summary>
+    /// 获取下一次操作的物体对象
+    /// </summary>
+    /// <returns></returns>
+    public static Transform GetNextTransform()
+    {
+        return currentItem.trans;
+    }
     /// <summary>
     /// 单项执行
     /// </summary>
@@ -65,11 +79,11 @@ public class Controller : MonoBehaviour
                 NextStep();
                 break;
             case EOperType.SetActive:
-                currentItem.trans.gameObject.SetActive(currentItem.active);
+                currentItem.trans.gameObject.SetActive(currentItem.isActive);
                 NextStep();
                 break;
             case EOperType.SetTransform:
-                if (Vector3.Distance(currentItem.trans.position, currentItem.transTarget.position) > currentItem.precision)
+                if (Vector3.Distance(currentItem.trans.position, currentItem.transTarget.position) > currentItem.precision || Vector3.Distance(currentItem.trans.localEulerAngles, currentItem.transTarget.localEulerAngles) > currentItem.precision)
                 {
                     currentItem.trans.position = Vector3.Lerp(currentItem.trans.position, currentItem.transTarget.position, currentItem.speed);
                     currentItem.trans.localEulerAngles = Vector3.Lerp(currentItem.trans.localEulerAngles, currentItem.transTarget.localEulerAngles, currentItem.speed);
@@ -87,7 +101,8 @@ public class Controller : MonoBehaviour
         for (int i = 0; i < groupList.Count; i++)
         {
             OperItem item = groupList[i];
-            Debug.Log("组合运动物体名称："+item.transName);
+            currentItem = item;
+            Debug.Log("组合运动物体名称：" + item.transName);
             switch (item.type)
             {
                 case EOperType.SetParent:
@@ -95,7 +110,7 @@ public class Controller : MonoBehaviour
                     groupList.Remove(item);
                     break;
                 case EOperType.SetActive:
-                    item.trans.gameObject.SetActive(item.active);
+                    item.trans.gameObject.SetActive(item.isActive);
                     groupList.Remove(item);
                     break;
                 case EOperType.SetTransform:
@@ -119,6 +134,10 @@ public class Controller : MonoBehaviour
     /// </summary>
     void NextStep()
     {
+        if (currentItem!=null && currentItem.isFinishPause)
+        {
+            b_pause = true;
+        }
         if (++id < list.Count)
         {
             if (list[id].group)
@@ -139,6 +158,10 @@ public class Controller : MonoBehaviour
             }
             Debug.Log("当前运动对象编号： " + id);
             currentItem = list[id];
+            //if (currentItem.isFinishPause)
+            //{
+            //    b_pause = true;
+            //}
         }
     }
 }

@@ -3,6 +3,9 @@
  * Date:        2015-07-02
  * Description: The DataStruct for xml file & Unity Scripts Communication with each other.
  * ChangeLog：
+ *      2015-07-25
+ *          Added:
+ *              1.添加拷贝构造函数
  *      2015-07-23
  *          Added:
  *              1.添加物体对象的激活与隐藏控制
@@ -45,10 +48,6 @@ public class OperItem
     /// </summary>
     public string tag;
     /// <summary>
-    /// 当前物体的唯一标识
-    /// </summary>
-    public int instanceID;
-    /// <summary>
     /// 操作的类型
     /// </summary>
     public EOperType type;
@@ -71,7 +70,7 @@ public class OperItem
     /// <summary>
     /// 当前物体是否激活
     /// </summary>
-    public bool active;
+    public bool isActive;
     /// <summary>
     /// 操作时的步骤提示
     /// </summary>
@@ -85,4 +84,29 @@ public class OperItem
     /// </summary>
     public bool group = false;
     public string groupID;
+    /// <summary>
+    /// 当前项执行完后，是否等待下一项的执行命令
+    /// </summary>
+    public bool isFinishPause = false;
+
+    public OperItem()
+    { }
+    public OperItem(OperItem item)
+    {
+        this.name = item.name;
+        this.trans = item.trans;
+        this.transName = item.transName;
+        this.tag = item.tag;
+        this.type = item.type;
+        this.transTarget = item.transTarget;
+        this.speed = item.speed;
+        this.precision = item.precision;
+        this.parent = item.parent;
+        this.isActive = item.isActive;
+        this.msg = item.msg;
+        this.errorMsg = item.errorMsg;
+        this.group = item.group;
+        this.groupID = item.groupID;
+        this.isFinishPause = item.isFinishPause;
+    }
 }
