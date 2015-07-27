@@ -90,6 +90,9 @@ public class XMLRW : MonoBehaviour
                 case EOperType.SetActive:
                     o.isActive = !string.IsNullOrEmpty(element.GetAttribute("active"));
                     break;
+                case EOperType.WaitTime:
+                    o.time = float.Parse(element.GetAttribute("time"));
+                    break;
             }
             o.msg = element.GetAttribute("msg");
             o.errorMsg = element.GetAttribute("errorMsg");
@@ -128,11 +131,12 @@ public class XMLRW : MonoBehaviour
             xmlNode.SetAttribute("speed", item.speed.ToString());
             xmlNode.SetAttribute("precision", item.precision.ToString());
             xmlNode.SetAttribute("parent", item.parent == null ? "" : item.parent.name);
-            xmlNode.SetAttribute("active", item.isActive?"true":"");
+            xmlNode.SetAttribute("active", item.isActive ? "true" : "");
+            xmlNode.SetAttribute("time", item.time.ToString());
             xmlNode.SetAttribute("msg", item.msg);
             xmlNode.SetAttribute("errorMsg", item.errorMsg);
             xmlNode.SetAttribute("group", item.group ? item.groupID : "");
-            xmlNode.SetAttribute("pause", item.isFinishPause?"true":"");
+            xmlNode.SetAttribute("pause", item.isFinishPause ? "true" : "");
             doc.DocumentElement.AppendChild(xmlNode);
         }
         doc.Save(path);

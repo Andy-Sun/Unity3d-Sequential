@@ -140,6 +140,9 @@ public class SetOperOrderEditor : Editor
                     case EOperType.SetActive:
                         order.OperOrder[nNode].isActive = EditorGUILayout.Toggle(new GUIContent("Is Active:"), order.OperOrder[nNode].isActive);
                         break;
+                    case EOperType.WaitTime:
+                        order.OperOrder[nNode].time = EditorGUILayout.FloatField(new GUIContent("Wait Time:"), order.OperOrder[nNode].time);
+                        break;
                 }
 
                 order.OperOrder[nNode].msg = EditorGUILayout.TextField(new GUIContent("Tip Messages:"), order.OperOrder[nNode].msg);

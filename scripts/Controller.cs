@@ -3,6 +3,11 @@
  * Date:            2015-07-20
  * Description:     控制XML存储操作的顺序执行。
  * ChangeLog:
+ *      2015-07-27
+ *          Improvement:
+ *              1.设置要加载的xml文件名称，使不同的操作可以操作不同的xml文件
+ *          Added:
+ *              1.添加空闲等待时间
  *      2015-07-23
  *          Added:
  *              1.添加物体对象的激活与隐藏控制
@@ -17,9 +22,11 @@
  */
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class Controller : MonoBehaviour
 {
+    public string operateXML = "OrderConfig.xml";
     /// <summary>
     /// 所有操作的列表
     /// </summary>
@@ -32,7 +39,7 @@ public class Controller : MonoBehaviour
 
     void Start()
     {
-        list = XMLRW.ReadXML("OrderConfig.xml", transform);
+        list = XMLRW.ReadXML(operateXML, transform);
         NextStep();
     }
 
@@ -91,7 +98,16 @@ public class Controller : MonoBehaviour
                 else
                     NextStep();
                 break;
+            case EOperType.WaitTime:
+                StartCoroutine(WaitTime(currentItem.time));
+                break;
         }
+    }
+
+    IEnumerator WaitTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+        NextStep();
     }
     /// <summary>
     /// 组合执行

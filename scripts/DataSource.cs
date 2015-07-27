@@ -3,6 +3,9 @@
  * Date:        2015-07-02
  * Description: The DataStruct for xml file & Unity Scripts Communication with each other.
  * ChangeLog：
+ *      2015-07-27
+ *          Added:
+ *              1.添加空闲等待时间
  *      2015-07-25
  *          Added:
  *              1.添加拷贝构造函数
@@ -21,7 +24,8 @@ public enum EOperType
 {
     SetTransform,
     SetParent,
-    SetActive
+    SetActive,
+    WaitTime
 }
 
 /// <summary>
@@ -63,6 +67,10 @@ public class OperItem
     /// 操作精度
     /// </summary>
     public float precision = 0.01f;
+    /// <summary>
+    /// 要等待的时间
+    /// </summary>
+    public float time = 0.0f;
     /// <summary>
     /// 操作参数，父物体
     /// </summary>
