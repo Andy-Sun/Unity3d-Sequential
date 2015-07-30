@@ -180,4 +180,27 @@ public class Controller : MonoBehaviour
             //}
         }
     }
+    string content = "";
+    public string lastMsg = "";
+    public Text _order;
+    /// <summary>
+    /// 显示操作序列
+    /// </summary>
+    public void ShowOrder()
+    {
+        content = "";
+        foreach (OperItem item in list)
+        {
+            if (item.msg == lastMsg)
+                continue;
+
+            if (item == currentItem)
+                content += "<color=red>" + item.msg + "</color>\n";
+            else
+                content += item.msg + "\n";
+            lastMsg = item.msg;
+        }
+        Debug.Log(content);
+        _order.text = content;
+    }
 }
