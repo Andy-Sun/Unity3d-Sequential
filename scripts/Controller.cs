@@ -3,6 +3,9 @@
  * Date:            2015-07-20
  * Description:     控制XML存储操作的顺序执行。
  * ChangeLog:
+ *      2015-08-02
+ *          Added:
+ *              1.添加默认不激活的物体列表，以防查找物体时无法查询到被禁用的物体
  *      2015-07-27
  *          Improvement:
  *              1.设置要加载的xml文件名称，使不同的操作可以操作不同的xml文件
@@ -23,10 +26,15 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.UI;
 
 public class Controller : MonoBehaviour
 {
-    public string operateXML = "OrderConfig.xml";
+    public string operateXML = "OrderConfig";
+    /// <summary>
+    /// 默认不激活的物体列表
+    /// </summary>
+    public List<Transform> defaultUnActive;
     /// <summary>
     /// 所有操作的列表
     /// </summary>
@@ -39,12 +47,18 @@ public class Controller : MonoBehaviour
 
     void Start()
     {
+        foreach (Transform item in defaultUnActive)
+        {
+            item.gameObject.SetActive(false);
+        }
         list = XMLRW.ReadXML(operateXML, transform);
         NextStep();
+        orderPanel.SetActive(false);
     }
 
     void Update()
     {
+        SetOrderContent();
         if (b_pause)
             return;
         if (groupList.Count != 0)
@@ -86,6 +100,19 @@ public class Controller : MonoBehaviour
                 NextStep();
                 break;
             case EOperType.SetActive:
+                if (!currentItem.trans)
+                {
+                    foreach (Transform item in defaultUnActive)
+                    {
+                        if (currentItem.transName == item.name)
+                        {
+                            currentItem.trans = item;
+                            currentItem.originPos = item.position;
+                            currentItem.originRot = item.localEulerAngles;
+                            break;
+                        }
+                    }
+                }
                 currentItem.trans.gameObject.SetActive(currentItem.isActive);
                 NextStep();
                 break;
@@ -99,15 +126,19 @@ public class Controller : MonoBehaviour
                     NextStep();
                 break;
             case EOperType.WaitTime:
-                StartCoroutine(WaitTime(currentItem.time));
+                if (!isWaiting)
+                    StartCoroutine(WaitTime(currentItem.time));
                 break;
         }
     }
 
+    bool isWaiting = false;
     IEnumerator WaitTime(float time)
     {
+        isWaiting = true;
         yield return new WaitForSeconds(time);
         NextStep();
+        isWaiting = false;
     }
     /// <summary>
     /// 组合执行
@@ -150,7 +181,8 @@ public class Controller : MonoBehaviour
     /// </summary>
     void NextStep()
     {
-        if (currentItem!=null && currentItem.isFinishPause)
+        SetOrderContent();
+        if (currentItem != null && currentItem.isFinishPause)
         {
             b_pause = true;
         }
@@ -172,27 +204,26 @@ public class Controller : MonoBehaviour
                     }
                 }
             }
-            Debug.Log("当前运动对象编号： " + id);
+            Debug.Log("当前运动对象编号： " + list.Count + "--" + id + "--" + list[id].msg);
+
             currentItem = list[id];
-            //if (currentItem.isFinishPause)
-            //{
-            //    b_pause = true;
-            //}
         }
     }
+
     string content = "";
     public string lastMsg = "";
+    public GameObject orderPanel;
     public Text _order;
     /// <summary>
     /// 显示操作序列
     /// </summary>
-    public void ShowOrder()
+    void SetOrderContent()
     {
         content = "";
         foreach (OperItem item in list)
         {
-            if (item.msg == lastMsg)
-                continue;
+            //if (item.msg == lastMsg)
+            //    continue;
 
             if (item == currentItem)
                 content += "<color=red>" + item.msg + "</color>\n";
@@ -200,7 +231,18 @@ public class Controller : MonoBehaviour
                 content += item.msg + "\n";
             lastMsg = item.msg;
         }
-        Debug.Log(content);
+        //  Debug.Log(content);
         _order.text = content;
+    }
+
+    public void ShowOrder()
+    {
+        if (orderPanel.activeSelf)
+            orderPanel.SetActive(false);
+        else
+        {
+            SetOrderContent();
+            orderPanel.SetActive(true);
+        }
     }
 }
