@@ -17,8 +17,8 @@ using System.Collections.Generic;
 [ExecuteInEditMode]
 public class SetOperOrder : MonoBehaviour
 {
-    public string fileName = "OrderConfig.xml";
-    public string saveName = "OrderConfig.xml";
+    public string fileName = "OrderConfig";
+    public string saveName = "OrderConfig";
     public List<OperItem> OperOrder = new List<OperItem>();
 
     public void MoveNodeUp(int nNode)
