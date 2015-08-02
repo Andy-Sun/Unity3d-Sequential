@@ -115,15 +115,17 @@ public class SetOperOrderEditor : Editor
                 EditorGUI.BeginChangeCheck();
                 order.OperOrder[nNode].name = EditorGUILayout.TextField(new GUIContent("Operate Name:"), order.OperOrder[nNode].name);
                 EditorGUI.EndChangeCheck();
-
-                EditorGUI.BeginChangeCheck();
-                GUI.contentColor = order.OperOrder[nNode].trans == null ? Color.red : GUI.contentColor;
-                order.OperOrder[nNode].trans = EditorGUILayout.ObjectField(new GUIContent("Operate GameObject:"), order.OperOrder[nNode].trans, typeof(Transform), true, GUILayout.ExpandWidth(true)) as Transform;
-                GUI.contentColor = v4GUIColor;
-                if (EditorGUI.EndChangeCheck())
+                if (order.OperOrder[nNode].type != EOperType.WaitTime)
                 {
-                    order.OperOrder[nNode].tag = order.OperOrder[nNode].trans.tag;
-                    order.OperOrder[nNode].transName = order.OperOrder[nNode].trans.name;
+                    EditorGUI.BeginChangeCheck();
+                    GUI.contentColor = order.OperOrder[nNode].trans == null ? Color.red : GUI.contentColor;
+                    order.OperOrder[nNode].trans = EditorGUILayout.ObjectField(new GUIContent("Operate GameObject:"), order.OperOrder[nNode].trans, typeof(Transform), true, GUILayout.ExpandWidth(true)) as Transform;
+                    GUI.contentColor = v4GUIColor;
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        order.OperOrder[nNode].tag = order.OperOrder[nNode].trans.tag;
+                        order.OperOrder[nNode].transName = order.OperOrder[nNode].trans.name;
+                    }
                 }
 
                 order.OperOrder[nNode].type = (EOperType)EditorGUILayout.EnumPopup(new GUIContent("Operate Type"), order.OperOrder[nNode].type, GUILayout.ExpandWidth(true));
