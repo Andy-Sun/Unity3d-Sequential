@@ -4,6 +4,12 @@
  * Date:        2015-07-06
  * Description: Read & Write XML file
  * ChangeLog:
+ *      2015-08-02
+ *          Added:
+ *              1.XML文件的读取改为从Resources文件夹中读取和写入
+ *      2015-07-28
+ *          Added:
+ *              1.保持物体的初始位置及角度信息，供操作后返回最初状态
  *      2015-07-23
  *          Added:
  *              1.添加物体对象的激活与隐藏控制
@@ -28,20 +34,23 @@ using System.Xml;
 
 public class XMLRW : MonoBehaviour
 {
+    
     /// <summary>
     /// 从XML文件中读取顺序信息
     /// </summary>
     [ExecuteInEditMode]
     public static List<OperItem> ReadXML(string fileName, Transform rootTrans)
     {
-        Debug.Log("Read:" + Application.dataPath + "\\" + fileName);
         /// <summary>
         /// 操作列表
         /// </summary>
         List<OperItem> oper = new List<OperItem>();
 
         XmlDocument doc = new XmlDocument();
-        doc.Load(Application.dataPath + "\\" + fileName);
+        TextAsset textAsset = (TextAsset)Resources.Load(fileName, typeof(TextAsset));
+        doc.LoadXml(textAsset.text);
+
+        // doc.Load(Application.dataPath + "\\" + fileName);
 
         XmlNode root = doc.SelectSingleNode("root");
         XmlNodeList list = root.ChildNodes;
@@ -58,9 +67,12 @@ public class XMLRW : MonoBehaviour
                 if (o.transName == trans.name)
                 {
                     o.trans = trans;
+                    o.originPos = trans.position;
+                    o.originRot = trans.localEulerAngles;
                     break;
                 }
             }
+            
             //根据操作类型填充对象值
             o.type = (EOperType)Enum.Parse(typeof(EOperType), element.GetAttribute("type"));
             switch (o.type)
@@ -115,7 +127,7 @@ public class XMLRW : MonoBehaviour
     [ExecuteInEditMode]
     public static void WriteXML(List<OperItem> operate, string fileName)
     {
-        string path = Application.dataPath + "\\" + fileName;
+        string path = Application.dataPath + "\\Resources\\" + fileName + ".xml";
         XmlDocument doc = new XmlDocument();
 
         //每次保存编辑后的结果时，不保留以前的内容
@@ -127,7 +139,7 @@ public class XMLRW : MonoBehaviour
             xmlNode.SetAttribute("transName", item.transName);
             xmlNode.SetAttribute("tag", item.tag);
             xmlNode.SetAttribute("type", item.type.ToString());
-            xmlNode.SetAttribute("targetName", item.transTarget.name);
+            xmlNode.SetAttribute("targetName", item.transTarget != null ? item.transTarget.name : "");
             xmlNode.SetAttribute("speed", item.speed.ToString());
             xmlNode.SetAttribute("precision", item.precision.ToString());
             xmlNode.SetAttribute("parent", item.parent == null ? "" : item.parent.name);
