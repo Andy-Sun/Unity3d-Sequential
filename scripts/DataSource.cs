@@ -3,6 +3,9 @@
  * Date:        2015-07-02
  * Description: The DataStruct for xml file & Unity Scripts Communication with each other.
  * ChangeLog：
+ *      2015-07-28
+ *          Added:
+ *              1.保持物体的初始位置及角度信息，供操作后返回最初状态
  *      2015-07-27
  *          Added:
  *              1.添加空闲等待时间
@@ -43,6 +46,14 @@ public class OperItem
     /// 当前操作的物体
     /// </summary>
     public Transform trans;
+    /// <summary>
+    /// 物体原始位置
+    /// </summary>
+    public Vector3 originPos;
+    /// <summary>
+    /// 物体原始旋转角度
+    /// </summary>
+    public Vector3 originRot;
     /// <summary>
     /// 操作物体的名称
     /// </summary>
